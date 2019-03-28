@@ -4,6 +4,8 @@ package net.coderchen.practice;
  * @author Liuyuchen
  * @date 2019/03/28
  * @Description 反转单向链表
+ * a -> b -> c -> d -> e
+ * e -> d -> c -> b -> a
  */
 public class ReverseLinkedList {
 
