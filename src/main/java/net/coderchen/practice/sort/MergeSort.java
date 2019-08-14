@@ -48,7 +48,7 @@ public class MergeSort {
                 tmp[i] = arr[begin + leftIndex++];
                 continue;
             }
-            if(arr[begin + leftIndex] > arr[middle + 1 + rightIndex]){
+            if(arr[begin + leftIndex] >= arr[middle + 1 + rightIndex]){
                 tmp[i] = arr[middle + 1 + rightIndex];
                 rightIndex++;
             }else{
