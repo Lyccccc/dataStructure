@@ -25,7 +25,6 @@ public class SkipList {
             tail.next = node;
             tail = node;
         }
-        System.out.println(this.toString());
         //创建索引
         indexRoot = buildIndex(root);
     }
@@ -39,7 +38,6 @@ public class SkipList {
         if(null == first.next.next){
             return first;
         }
-        System.out.println("第" + ++indexDepth + "层索引");
         Node lineRoot = new Node(first.value, null, first);
         Node lineTail = lineRoot;
         int count = 0;
@@ -55,7 +53,6 @@ public class SkipList {
             }
             node = node.next;
         }
-        printNodeList(lineRoot);
         return buildIndex(lineRoot);
     }
 
@@ -63,15 +60,17 @@ public class SkipList {
      * 打印链表
      * @param first
      */
-    private void printNodeList(Node first){
-        System.out.print(first.value);
+    private String printNodeList(Node first){
+        StringBuilder builder = new StringBuilder("");
+        builder.append(first.value);
         Node node = first;
         while(null != node.next){
-            System.out.print("->");
+            builder.append("->");
             node = node.next;
-            System.out.print(node.value);
+            builder.append(node.value);
         }
-        System.out.println();
+        builder.append("\n");
+        return builder.toString();
     }
 
     @Override
@@ -79,16 +78,18 @@ public class SkipList {
         if(root == null){
             return null;
         }
-
-        Node node = root;
-        StringBuilder resultBuilder = new StringBuilder();
-        resultBuilder.append(node.value);
-        while(node.next != null){
-            resultBuilder.append("->");
-            node = node.next;
-            resultBuilder.append(node.value);
-        }
-        return resultBuilder.toString();
+        StringBuilder builder = new StringBuilder("");
+        Node node = indexRoot;
+        do{
+            if(null == node.down){
+                builder.append("链表元素：");
+            }else{
+                builder.append("第" + ++indexDepth + "层索引：");
+            }
+            builder.append(printNodeList(node));
+            node = node.down;
+        }while (null != node);
+        return builder.toString();
     }
 
     public static void main(String[] args) {
