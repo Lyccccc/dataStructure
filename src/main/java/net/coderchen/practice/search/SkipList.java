@@ -13,45 +13,47 @@ public class SkipList {
     /**
      * 底层数据根节点
      */
-    private Node root;
+    private Node rootGuard = new Node();
     /**
      * 索引根节点
      */
-    private Node indexRoot;
+    private Node indexRootGuard = new Node();
     /**
      * 索引深度
      */
-    private int indexDepth;
+    private int indexDepth = 0;
 
     public SkipList(int length) {
         Random random = new Random();
-        int value = random.nextInt(5);
-        root = new Node(value, null, null);
-        Node tail = root;
+        int value = 1 + random.nextInt(10);
+        rootGuard.next = new Node(value, null, null);
+        Node tail = rootGuard.next;
         //初始化链表
         for (int i = 0; i < length - 1; i++) {
-            value += random.nextInt(5);
+            value += random.nextInt(10);
             Node node = new Node(value, null, null);
             tail.next = node;
             tail = node;
         }
         //创建索引
-        indexRoot = buildIndex(root);
+        buildIndex(rootGuard);
     }
 
     /**
      * 创建索引
-     * @param first 当前行的第一个元素
+     * @param guard 底层行的哨兵
      */
-    private Node buildIndex(Node first){
+    private void buildIndex(Node guard){
+        Node head = guard.next;
         //终止条件：链表长度=2
-        if(null == first.next.next){
-            return first;
+        if(null == head.next.next){
+            indexRootGuard = guard;
+            return;
         }
-        Node lineRoot = new Node(first.value, null, first);
+        Node lineRoot = new Node(head.value, null, head);
         Node lineTail = lineRoot;
         int count = 0;
-        Node node = first;
+        Node node = head;
         while(null != node.next){
             count++;
             //逢2创建索引节点
@@ -63,14 +65,17 @@ public class SkipList {
             }
             node = node.next;
         }
-        return buildIndex(lineRoot);
+        //当前行的哨兵
+        Node lineGuard = new Node(0, lineRoot, guard);
+        buildIndex(lineGuard);
     }
 
     /**
      * 打印链表
-     * @param first 当前行的第一个元素
+     * @param guard 当前行的哨兵
      */
-    private String printNodeList(Node first){
+    private String printNodeList(Node guard){
+        Node first = guard.next;
         StringBuilder builder = new StringBuilder("");
         builder.append(first.value);
         Node node = first;
@@ -85,11 +90,11 @@ public class SkipList {
 
     @Override
     public String toString() {
-        if(root == null){
+        if(rootGuard.next == null){
             return null;
         }
         StringBuilder builder = new StringBuilder("");
-        Node node = indexRoot;
+        Node node = indexRootGuard;
         do{
             if(null == node.down){
                 builder.append("链表元素：");
@@ -108,7 +113,7 @@ public class SkipList {
      * @return 位置
      */
     public Node search(int value){
-        Node node = indexRoot;
+        Node node = indexRootGuard;
         while(true){
             while(null != node.next && value != node.value && value >= node.next.value){
                 node = node.next;
@@ -130,6 +135,8 @@ public class SkipList {
      * 从跳表中删除元素
      * @param value 待删除的元素
      * @return 删除成功标识
+     * 思路：从索引根节点开始遍历
+     * 1、若当前节点
      */
     public boolean delete(int value){
         return true;
@@ -150,6 +157,9 @@ public class SkipList {
         private int value;
         private Node next;
         private Node down;
+
+        public Node() {
+        }
 
         public Node(int value, Node next, Node down) {
             this.value = value;
