@@ -6,7 +6,7 @@ import java.util.Random;
  * @author Liuyuchen
  * @date 2019/08/23
  * 跳表
- * 支持快速增、删、查（O(logn)）
+ * 支持快速增、删、查，复杂度均为O(logn)
  */
 public class SkipList {
 
@@ -23,6 +23,9 @@ public class SkipList {
      */
     private int indexDepth = 0;
 
+    /**
+     * @param length 跳表长度
+     */
     public SkipList(int length) {
         Random random = new Random();
         int value = 1 + random.nextInt(10);
@@ -41,7 +44,7 @@ public class SkipList {
 
     /**
      * 创建索引
-     * @param guard 底层行的哨兵
+     * @param guard 下一行的哨兵
      */
     private void buildIndex(Node guard){
         Node head = guard.next;
@@ -50,7 +53,9 @@ public class SkipList {
             indexRootGuard = guard;
             return;
         }
+        //根节点
         Node lineRoot = new Node(head.value, null, head);
+        //尾节点
         Node lineTail = lineRoot;
         int count = 0;
         Node node = head;
@@ -67,6 +72,7 @@ public class SkipList {
         }
         //当前行的哨兵
         Node lineGuard = new Node(0, lineRoot, guard);
+        //递归，构建上一层的索引
         buildIndex(lineGuard);
     }
 
@@ -90,6 +96,7 @@ public class SkipList {
 
     @Override
     public String toString() {
+        //空链表
         if(rootGuard.next == null){
             return null;
         }
@@ -97,7 +104,7 @@ public class SkipList {
         Node node = indexRootGuard;
         do{
             if(null == node.down){
-                builder.append("链表元素：");
+                builder.append(" 链表元素：");
             }else{
                 builder.append("第").append(++indexDepth).append("层索引：");
             }
@@ -110,11 +117,12 @@ public class SkipList {
     /**
      * 查找值在跳表中的位置
      * @param value 待查找的值
-     * @return 位置
+     * @return 第一个匹配的节点
      */
     public Node search(int value){
         Node node = indexRootGuard;
         while(true){
+            //value不等于当前节点且大于等于右边节点时，向右移动
             while(null != node.next && value != node.value && value >= node.next.value){
                 node = node.next;
             }
@@ -133,21 +141,33 @@ public class SkipList {
 
     /**
      * 从跳表中删除元素
-     * @param value 待删除的元素
+     * @param val 待删除的元素
      * @return 删除成功标识
      * 思路：从索引根节点开始遍历
-     * 1、若当前节点
      */
-    public boolean delete(int value){
+    public boolean delete(int val){
         return true;
     }
 
     /**
-     * 向跳表中新增元素
-     * @param value 新增的元素
+     * 向跳表中新增元素，如果已存在相同的元素，插入到其后面
+     * @param val
+     * 1、先插入，再更新索引
+     *
      */
-    public void add(int value){
-
+    public void add(int val){
+//        Node node = indexRootGuard;
+//        while(true){
+//            //value大于等于右边节点时，向右移动
+//            while(null != node.next && val >= node.next.value){
+//                node = node.next;
+//            }
+//            if(null != node.down){
+//                node = node.down;
+//            }else{
+//                break;
+//            }
+//        }
     }
 
     /**
@@ -172,18 +192,18 @@ public class SkipList {
             return "Node{" +
                     "value=" + value +
                     ", down=" + (null == down ? "null" : down.value) +
-                    ", nextValue" + (null == next ? "null" : next.value) +
+                    ", nextValue=" + (null == next ? "null" : next.value) +
                     '}';
         }
     }
 
     public static void main(String[] args) {
-        SkipList skipList = new SkipList(100);
+        SkipList skipList = new SkipList(50);
         System.out.println(skipList.toString());
-        for (int i = 0; i < 50; i++) {
-            int random = new Random().nextInt(200);
-            System.out.print("random:" + random + " ");
-            System.out.println(skipList.search(random));
+        for (int i = 0; i < 10; i++) {
+            int random = new Random().nextInt(150);
+            System.out.print("随机查找:" + random + " ");
+            System.out.println(null == skipList.search(random) ? "不存在" : skipList.search(random));
         }
     }
 }
