@@ -17,6 +17,16 @@ public class Heap {
         count = 0;
     }
 
+    public Heap(int[] array) {
+        capacity = array.length - 1;
+        count = 0;
+        arr = array;
+        for (int i = 1; i < array.length; i++) {
+            //依次插入堆中
+            insert(arr[i]);
+        }
+    }
+
     /**
      * 向堆中添加元素
      * @param item 添加的元素
@@ -48,6 +58,15 @@ public class Heap {
         arr[1] = arr[count--];
         //堆顶节点下沉
         int i = 1;
+        heapify(arr, i);
+    }
+
+    /**
+     * 节点下沉
+     * @param arr 堆数组
+     * @param i 根节点位置
+     */
+    private void heapify(int[] arr, int i){
         int maxPos = i;
         while(true){
             if(i * 2 <= count && arr[i * 2] > arr[i]){
@@ -70,10 +89,32 @@ public class Heap {
         arr[j] = tmp;
     }
 
+    public void sort(){
+        //将堆顶元素和堆尾元素做交换，类似删除堆顶操作
+        if(0 == count){
+            return;
+        }
+        for (int i = arr.length - 1; i >= 2; i--) {
+            //交换i和堆顶元素
+            swap(arr, i, 1);
+            count--;
+            //堆顶元素下沉
+            heapify(arr, 1);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 1; i <= count; i++) {
+            stringBuilder.append(arr[i]).append(" ");
+        }
+        return stringBuilder.toString();
+    }
+
+    public String sortedString(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 1; i <= capacity; i++) {
             stringBuilder.append(arr[i]).append(" ");
         }
         return stringBuilder.toString();
@@ -93,16 +134,17 @@ public class Heap {
         heap.insert(25);
         //arr = 0, 90, 74, 66, 65, 25, 28, 30, 20, 40, 19
         System.out.println(heap.toString());
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-        heap.deleteTop();
-
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+//        heap.deleteTop();
+        heap.sort();
+        System.out.println(heap.sortedString());
     }
 }
