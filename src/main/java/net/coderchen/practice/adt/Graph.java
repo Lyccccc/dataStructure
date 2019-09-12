@@ -91,6 +91,52 @@ public class Graph {
         System.out.print(t + " ");
     }
 
+    /**
+     * 深度优先搜索
+     * @param s
+     * @param t
+     * 0 —— 1 —— 2
+     * |      |      |
+     * 3 —— 4 —— 5
+     *        |      |
+     *        6 —— 7
+     */
+
+    private boolean found = false;
+    public void dfs(int s, int t){
+        found = false;
+        if(s == t){
+            return;
+        }
+        //visited 记录顶点是否被访问过
+        boolean[] visited = new boolean[vertexs];
+        //prev 记录顶点的上一个顶点，例如 2 -> 3 ->6，则prev[3] == 2, prev[6] == 3
+        int[] prev = new int[vertexs];
+        for (int i : prev) {
+            prev[i] = -1;
+        }
+        recurDfs(prev, visited, s, t);
+        printTrace(prev, s, t);
+        System.out.println("");
+    }
+
+    private void recurDfs(int[] prev, boolean[] visited, int w, int t){
+        if(found){
+            return;
+        }
+        visited[w] = true;
+        if(w == t){
+            found = true;
+            return;
+        }
+        for (int i : adj[w]) {
+            if(!visited[i]){
+                prev[i] = w;
+                recurDfs(prev, visited, i, t);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Graph graph = new Graph(8);
         graph.addEdge(0, 1);
@@ -109,7 +155,12 @@ public class Graph {
         graph.bfs(1, 6);
         System.out.println("bfs搜索3 - 5");
         graph.bfs(3, 5);
-        System.out.println("bfs搜索4 - 4");
-        graph.bfs(4, 4);
+        System.out.println();
+        System.out.println("dfs搜索0 - 7");
+        graph.dfs(0, 7);
+        System.out.println("dfs搜索1 - 6");
+        graph.dfs(1, 6);
+        System.out.println("dfs搜索3 - 5");
+        graph.dfs(3, 5);
     }
 }
